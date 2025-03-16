@@ -41,7 +41,7 @@ regd_users.post("/login", (req,res) => {
 });
 
 // Add a book review
-regd_users.put("/review/:isbn", (req, res) => {
+regd_users.put("/auth/review/:isbn", (req, res) => {
   console.log("Reached");
   const username = req.session.authorization.username;
   const isbn = req.params.isbn;
@@ -53,15 +53,14 @@ regd_users.put("/review/:isbn", (req, res) => {
           books[key].reviews[username] = review;
           console.log(`Review added for user ${username}: ${review}`);
           return res.status(300).json({message: `Review added for user ${username}: ${review}`});
-      }
-      
+      }  
   }
   } else{
     return res.status(300).json({message: "Invalid ISBN"});
   }
 });
 
-regd_users.delete("/review/:isbn", (req, res) => {
+regd_users.delete("/auth/review/:isbn", (req, res) => {
   const username = req.session.authorization.username;
   const isbn = req.params.isbn;
   let filtered_books = Object.values(books).filter((books) => books.isbn === isbn);
