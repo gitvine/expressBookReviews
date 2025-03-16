@@ -28,9 +28,7 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  res.send(JSON.stringify(books));
-  //return res.status(300).json({message: "Yet to be implemented"});
+  return res.status(300).json(books);
 });
 
 // Get book details based on ISBN
@@ -39,7 +37,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
   let filtered_books = Object.values(books).filter(book => book.isbn === isbn);
   if(filtered_books.length > 0){
-    res.send(filtered_books[0]);
+    return res.status(300).json(filtered_books[0]);
   } else{
     return res.status(300).json({message: "Invalid ISBN"});
   }
