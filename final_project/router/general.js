@@ -28,7 +28,7 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.status(300).json(books);
+  return res.status(200).json(books);
 });
 
 // Get book details based on ISBN
@@ -37,11 +37,10 @@ public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
   let filtered_books = Object.values(books).filter(book => book.isbn === isbn);
   if(filtered_books.length > 0){
-    return res.status(300).json(filtered_books[0]);
+    return res.status(200).json(filtered_books[0]);
   } else{
-    return res.status(300).json({message: "Invalid ISBN"});
+    return res.status(200).json({message: "Invalid ISBN"});
   }
-  
  });
   
 // Get book details based on author
@@ -67,34 +66,48 @@ public_users.get('/review/:isbn',function (req, res) {
   } else{
     return res.status(300).json({message: "Invalid ISBN"});
   }
-  
 });
 
-public_users.get('/data', (req, res) => {
-  axios.get('http://localhost:5000') // From local API
-      .then(response => res.json(response.data))
-      .catch(error => res.status(500).json({ error: 'Failed to fetch data' }));
+public_users.get('/data', async (req, res) => {
+  try {
+    const response = await axios.get('http://localhost:5000/'); // From local API
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching data:', error.message); // Logs error details
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
 });
 
-public_users.get('/data/isbn/:isbn', (req, res) => {
-  const isbn = req.params.isbn;
-  axios.get(`http://localhost:5000/isbn/${isbn}`) // From local API
-      .then(response => res.json(response.data))
-      .catch(error => res.status(500).json({ error: 'Failed to fetch data' }));
+
+public_users.get('/data/isbn/:isbn', async (req, res) => {
+  try {
+    const isbn = req.params.isbn;
+    const response = await axios.get(`http://localhost:5000/isbn/${isbn}`); // From local API
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error : 'Failed to fetch data'});
+  }
 });
 
-public_users.get('/data/author/:author', (req, res) => {
-  const author = req.params.author;
-  axios.get(`http://localhost:5000/author/${author}`) // From local API
-      .then(response => res.json(response.data))
-      .catch(error => res.status(500).json({ error: 'Failed to fetch data' }));
+public_users.get('/data/author/:author', async (req, res) => {
+  try{
+    const author = req.params.author;
+    const response = await axios.get(`http://localhost:5000/author/${author}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
 });
 
-public_users.get('/data/title/:title', (req, res) => {
-  const title = req.params.title;
-  axios.get(`http://localhost:5000/title/${title}`) // From local API
-      .then(response => res.json(response.data))
-      .catch(error => res.status(500).json({ error: 'Failed to fetch data' }));
+public_users.get('/data/title/:title', async (req, res) => {
+  try {
+      const title = req.params.title;
+      console.log(req.params.title);
+      const response = await axios.get(`http://localhost:5000/title/${title}`); // Await the API response
+      res.json(response.data);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch data' });
+  }
 });
 
 module.exports.general = public_users;
